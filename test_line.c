@@ -9,8 +9,8 @@ int	main(int argc, char **argv)
 	int	fd;
 	char *pnt;
 
-	fflush(stdout);
 	printf("Buffer size=%d\n",BUFFER_SIZE);
+	fflush(stdout);
 	if (check_arguments(argc))
 		return (1);
 	fd = open(argv[1], O_RDONLY);
@@ -21,9 +21,14 @@ int	main(int argc, char **argv)
 	}
 */
 	pnt = get_next_line(fd);
+	printf("line ->%s<-\n",pnt);
+	pnt = get_next_line(fd);
+	printf("2nd line ->%s<-\n",pnt);
+	pnt = get_next_line(fd);
+	printf("3nd line ->%s<-\n",pnt);
+	read(fd, pnt, 10);
+	printf("read result ->%s<-\n",pnt);
 	close(fd);
-	write(1, pnt, BUFFER_SIZE);
-	write(1, "\n", 1);
 	return (1);
 }
 

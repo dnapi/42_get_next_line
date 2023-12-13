@@ -6,7 +6,7 @@
 /*   By: apimikov <apimikov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 09:26:33 by apimikov          #+#    #+#             */
-/*   Updated: 2023/12/12 16:25:13 by apimikov         ###   ########.fr       */
+/*   Updated: 2023/12/13 16:23:00 by apimikov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,75 +14,115 @@
 #include "get_next_line.h"
 
 t_str_list	*read_once(int fd);
-t_str_list	*read_line(int fd, t_str_list **buffer);
+char		*read_line(int fd, t_str_list **buffer);
+char		*mk_str_buf(t_str_list **buffer, size_t len);
 t_str_list	*init_node(void);
-int	nl_position(const char *s);
+size_t		nl_pos(const char *s);
 
 char	*get_next_line(int fd)
 {
 	static t_str_list	*buffer[MAX_FD];
-	char		*pnt;
-	size_t		size;
-	size_t		i;
-	t_str_list	*node;
+//	t_str_list	*node;
+	char *pnt;
 
+//	printf("let us call this function!");
 	if (fd == -1 || BUFFER_SIZE <= 0)
 		return ((void *)0);
-//	node = read_once(fd);
-//	return (node->data);
-//  remove stdio
 //	printf("fd = %d, &buffer[%d] = %p, NULL= %p\n", fd, fd, &buffer[fd], NULL);
-	node = read_line(fd, &buffer[fd]);
-	return (node->data);
+//	node = read_line(fd, &buffer[fd]);
+//	if (!node)
+		//clean buffer linked  list
+//	return (node->data);
+//	printf("1let us call this function!\n");
+	pnt = read_line(fd, &buffer[fd]);
+	return (pnt);
+
 }
 
-t_str_list	*read_line(int fd, t_str_list **buffer)
+
+char *mk_str_buf(t_str_list **buffer, size_t len)
+{
+	t_str_list	*curr_buf;
+	char		*pnt;
+	char		*pnt_node;
+	size_t		i;
+
+	curr_buf = *buffer;
+	i = 0;
+	pnt = (char *)malloc((len + 1) * sizeof(char));
+	if (!pnt)
+		return ((void *)0);
+
+	while (curr_buf)
+	{
+//		printf("i=%zu\n", i);
+		pnt_node = curr_buf->data;
+//		printf("data=  ->%s<- \n", pnt_node);
+		while (i < len && *pnt_node)
+			*(pnt + (i++)) = *pnt_node++;
+		curr_buf = curr_buf->next;
+	}
+	*(pnt + i) = '\0';
+	printf("5th stop, len = %zu, i = %zu \n",len, i);
+//	return (pnt);
+	i = 0;
+	while (*pnt_node)
+		*((*buffer)->data + i++) = *pnt_node++;
+	*((*buffer)->data + i) = '\0';
+	(*buffer)->size = i;
+	printf("buffer = ->%s<-\n",(*buffer)->data);
+//	printf("3let us call this function!\n");
+	// free from buffer->next  till end
+	return (pnt);
+}
+
+
+char	*read_line(int fd, t_str_list **buffer)
 {
 	t_str_list	*curr_buffer;
 	t_str_list	*next_buffer;
-//	int		i;
-//	char	c;
-	size_t	position;
-	size_t len;
+	size_t	pos;
+	size_t	len;
+	char	*pnt;
 
-//	i = 0;
+	if (!*buffer)
+		*buffer = init_node();
 	curr_buffer = *buffer;
-	if (!curr_buffer)
-		curr_buffer = init_node();
-	position = nl_position(curr_buffer->data);
+	pos = nl_pos(curr_buffer->data);
 	len = curr_buffer->size;
-
-//	write(1, "num=0\n", 6);
-//	write(1, curr_buffer->data, BUFFER_SIZE + 1); 
-//	write(1, "end\n", 4);
-	while (!position)
+	//while (pos == 0 && curr_buffer->size>=0)
+	while (pos == 0)
 	{
+//		printf("in read_line pos=->%zu<-\n",pos);
 		next_buffer = read_once(fd);
+		if (!next_buffer)  // clean list ??? here ove in get_next_line?
+			return ((void *)0);
 		curr_buffer->next = next_buffer;
 		curr_buffer = next_buffer;
-		position = nl_position(curr_buffer->data);
-		len = len + curr_buffer->size;
-//		c = '0' + i;
-//		write(1, &c, 1);
-//		write(1, next_buffer->data, BUFFER_SIZE + 1); 
-//		write(1, "\n" , 1);
+		pos = nl_pos(curr_buffer->data);
+		len = len + (!pos) * curr_buffer->size + (pos > 0) * pos;
 	}
-	printf("len = %zu",len);
-	return (curr_buffer);
+//call list and buffer extractor
+//	printf("in read_line len=%zu, pos=%zu, curr_buffer->s=%zu\n",len, pos,curr_buffer-> size);
+//	pnt = NULL;
+	pnt = mk_str_buf(buffer, len);
+	return (pnt);
 }
-
 
 t_str_list	*read_once(int fd)
 {
 	t_str_list	*pnt_l;
-	size_t		len;
+	ssize_t		len;
 
-	pnt_l = init_node();	
+	pnt_l = init_node();
 	len = read(fd, pnt_l->data, BUFFER_SIZE);
-	if (len == -1)
+//	if (len == -1)
+//	printf("in read_once len= ->%zd<-\n",len);
+	if (len <= 0)
 	{
 		free(pnt_l->data);
 		pnt_l->data = NULL;
+		pnt_l->size = len;
 		free(pnt_l);
 		return ((void *)0);
 	}
@@ -113,8 +153,7 @@ t_str_list	*init_node(void)
 	return (pnt_l);
 }
 
-
-int	nl_position(const char *s)
+size_t	nl_pos(const char *s)
 {
 	int count;
 
