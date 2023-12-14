@@ -2,6 +2,8 @@
 #include <fcntl.h>
 #include "get_next_line.h"
 
+//valgrind --tool=memcheck <your_app> <your_apps_params>
+
 int	check_arguments(int argc);
 
 int	main(int argc, char **argv)

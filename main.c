@@ -14,6 +14,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+//valgrind --tool=memcheck <your_app> <your_apps_params>
+
 void	ft_display_file(int fd);
 int		check_arguments(int argc);
 
