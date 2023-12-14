@@ -16,7 +16,7 @@ typedef struct	s_str_list
 {
 	char	*data;
 	struct s_str_list	*next;
-	size_t	size;
+	ssize_t	size;
 //	struct s_str_list	*prev;
 //	size_t	start;
 //	size_t	end;

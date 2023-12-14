@@ -21,11 +21,13 @@ int	main(int argc, char **argv)
 	}
 */
 	pnt = get_next_line(fd);
-	printf("line ->%s<-\n",pnt);
+	printf("1st line \n\t->%s<-\n",pnt);
 	pnt = get_next_line(fd);
-	printf("2nd line ->%s<-\n",pnt);
+	printf("2nd line \n\t->%s<-\n",pnt);
 	pnt = get_next_line(fd);
-	printf("3nd line ->%s<-\n",pnt);
+	printf("3nd line \n\t->%s<-\n",pnt);
+	pnt = get_next_line(fd);
+	printf("4th line \n\t->%s<-\n",pnt);
 	read(fd, pnt, 10);
 	printf("read result ->%s<-\n",pnt);
 	close(fd);
