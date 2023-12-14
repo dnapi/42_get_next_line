@@ -23,14 +23,16 @@ size_t		nl_pos(const char *s);
 char	*get_next_line(int fd)
 {
 	static t_str_list	*buffer[MAX_FD];
-	char *pnt;
+//	ttttstafic char		*buffer[MAX_FD][BUFFER_SIZE + 1];
+	char			*pnt;
 
-	if (fd == -1 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return ((void *)0);
 	if (!init_node(&buffer[fd]))
 		return ((void *)0);
 	pnt = read_line(fd, &buffer[fd]);
-	//if pnt == NULL clean everything!
+	if (!pnt)
+		buffer[fd]->size = -1;
 	delete_list(&buffer[fd]);
 	return (pnt);
 }
@@ -39,7 +41,7 @@ int	delete_list(t_str_list **buffer)
 {
 	t_str_list	*node_curr;
 	t_str_list	*node_temp;
-	
+
 	node_curr = (*buffer)->next;
 	(*buffer)->next = (void *)0;
 	if ((*buffer)->size <= 0)
@@ -60,7 +62,7 @@ int	delete_list(t_str_list **buffer)
 	return (1);
 }
 
-
+// 25 + 1 lines !!!
 char *mk_str_buf(t_str_list **buffer, size_t len)
 {
 	t_str_list	*curr_buf;
@@ -91,7 +93,7 @@ char *mk_str_buf(t_str_list **buffer, size_t len)
 	return (pnt);
 }
 
-
+// 25+3extra lines in funciton   
 char	*read_line(int fd, t_str_list **buffer)
 {
 	t_str_list	*curr_buffer;
@@ -103,18 +105,18 @@ char	*read_line(int fd, t_str_list **buffer)
 	curr_buffer = *buffer;
 	pos = nl_pos(curr_buffer->data);
 	len = (!pos) * curr_buffer->size + pos;
-	while ((curr_buffer == *buffer && !pos) || (pos == 0
-	       && curr_buffer->size == BUFFER_SIZE)) // will not read last time
+	while ((curr_buffer == *buffer && !pos) || (pos == 0 
+		&& curr_buffer->size == BUFFER_SIZE)) // will not read last time
 	{
 		next_buffer = read_once(fd);
-		if (!next_buffer)  // clean list ??? here ove in get_next_line?
+		if (!next_buffer) // clean list ??? here ove in get_next_line?
 			return ((void *)0);
-		if (next_buffer->size == -1) //this (if () {})  can be deleted !
+		if (next_buffer->size == -1) //this (if () {})  can be deleted ?
 		{
-//			printf("read -> 0\n");
 			free(next_buffer->data);
 			free(next_buffer);
-			break;
+		//	next_buffer = (void *)0;
+			break ;
 		}
 		curr_buffer->next = next_buffer;
 		curr_buffer = next_buffer;
@@ -131,7 +133,10 @@ t_str_list	*read_once(int fd)
 	ssize_t		len;
 
 	pnt_l = (void *)0;
-	init_node(&pnt_l);
+//	init_node(&pnt_l);
+	if (!init_node(&pnt_l))
+		return ((void *)0);		
+	// if init_node = 0 clean all
 	len = read(fd, pnt_l->data, BUFFER_SIZE);
 	if (len < 0)
 	{
@@ -143,7 +148,6 @@ t_str_list	*read_once(int fd)
 	pnt_l->size = len + (!len) * (-1);
 	return (pnt_l);
 }
-
 
 int	init_node(t_str_list **pnt_l)
 {
@@ -167,42 +171,20 @@ int	init_node(t_str_list **pnt_l)
 	i = 0; // is it needed to put all to \0
 	while (i++ < BUFFER_SIZE + 1)
 		*pnt++ = '\0';
+//	*pnt = '\0';
 	return (1);
 }
 
-/*
-t_str_list	*init_node(void)
-{
-	t_str_list	*pnt_l;
-	char		*pnt;
-
-	pnt_l = (t_str_list *)malloc(sizeof(t_str_list));
-	if (!pnt_l)
-		return ((void *)0);
-	pnt = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!pnt)
-	{
-		free(pnt_l);
-		return ((void *)0);
-	}
-	*pnt = '\0';
-	pnt_l->data = pnt;
-	pnt_l->next = (void *)0;
-	pnt_l->size = 0;
-	return (pnt_l);
-}
-*/
-
 size_t	nl_pos(const char *s)
 {
-	int count;
+	int	count;
 
 	count = 1;
 	while (*s)
 	{
 		if (*s == '\n')
 			return (count);
-        	s++;
+		s++;
 		count++;
 	}
 	return (0);
