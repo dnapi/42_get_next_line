@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: apimikov <apimikov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 09:26:33 by apimikov          #+#    #+#             */
-/*   Updated: 2023/12/15 09:34:23 by apimikov         ###   ########.fr       */
+/*   Created: 2023/12/15 10:32:44 by apimikov          #+#    #+#             */
+/*   Updated: 2024/02/02 12:35:47 by apimikov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int		read_once(int fd, t_gnl_list **pnt_l);
 char	*read_line(int fd, t_gnl_list **buffer);

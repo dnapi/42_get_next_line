@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: apimikov <apimikov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/15 08:25:21 by apimikov          #+#    #+#             */
-/*   Updated: 2023/12/15 08:27:50 by apimikov         ###   ########.fr       */
+/*   Created: 2023/12/15 10:33:15 by apimikov          #+#    #+#             */
+/*   Updated: 2024/02/02 12:36:15 by apimikov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	gnl_init_node(t_gnl_list **pnt_l)
 {
